@@ -122,7 +122,7 @@ class TestDataset(unittest.TestCase):
 
         paddle.enable_static()
 
-        exe = paddle.static.Executor(paddle.CPUPlace())
+        exe = paddle.base.Executor(paddle.CPUPlace())
         startup_program = paddle.static.Program()
         main_program = paddle.static.Program()
         exe.run(startup_program)
@@ -209,7 +209,7 @@ class TestDataset(unittest.TestCase):
         dataset.load_into_memory()
         paddle.enable_static()
 
-        exe = paddle.static.Executor(paddle.CPUPlace())
+        exe = paddle.base.Executor(paddle.CPUPlace())
         startup_program = paddle.static.Program()
         main_program = paddle.static.Program()
         exe = base.Executor(base.CPUPlace())
@@ -764,7 +764,8 @@ class TestDataset(unittest.TestCase):
             )
             for i in range(self.epoch_num):
                 for data in data_loader():
-                    exe.run(base.default_main_program(), feed=data)
+                    if data is not None:
+                        exe.run(base.default_main_program(), feed=data)
         else:
             for i in range(self.epoch_num):
                 try:
@@ -822,7 +823,7 @@ class TestDataset(unittest.TestCase):
 
         paddle.enable_static()
 
-        exe = paddle.static.Executor(paddle.CPUPlace())
+        exe = paddle.base.Executor(paddle.CPUPlace())
         startup_program = paddle.static.Program()
         main_program = paddle.static.Program()
         exe.run(startup_program)
