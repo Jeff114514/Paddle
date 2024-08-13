@@ -1204,12 +1204,50 @@ bool MeanAllOpInferSymbolicShape(
 //   return true;
 // }
 
-// bool MultinomialOpInferSymbolicShape(pir::Operation *op,
-//                                      pir::InferSymbolicShapeContext
-//                                      *infer_context) {
-//   // pass
-//   return true;
-// }
+bool MultinomialOpInferSymbolicShape(
+    pir::Operation *op, pir::InferSymbolicShapeContext *infer_context) {
+  ExprVec x_dims = [&] {
+    ExprVec dims;
+    const auto &x_shape_or_data =
+        infer_context->GetShapeOrDataForValue(op->operand_source(0));
+    dims = x_shape_or_data.shape();
+    return dims;
+  }();
+  const auto &num_samples_shape_or_data =
+      infer_context->GetShapeOrDataForValue(op->operand_source(1));
+  size_t x_rank = x_dims.size();
+  PADDLE_ENFORCE_GT(x_rank,
+                    0,
+                    common::errors::InvalidArgument(
+                        "The number of dimensions of the input probability "
+                        "distribution should be > 0, but got %d.",
+                        x_rank));
+  PADDLE_ENFORCE_LE(x_rank,
+                    2,
+                    common::errors::InvalidArgument(
+                        "The number of dimensions of the input probability "
+                        "distribution should be <= 2, but got %d.",
+                        x_rank));
+  ExprVec out_dims(x_rank);
+  for (size_t i = 0; i < x_rank - 1; i++) {
+    out_dims[i] = x_dims[i];
+  }
+
+  ExprVec num_samples_data = details::GetOrCreateExprVecFromData(
+      num_samples_shape_or_data, infer_context);
+
+  if (!num_samples_data.empty()) {
+    out_dims[x_rank - 1] = num_samples_data[0];
+  } else {
+    out_dims[x_rank - 1] = symbol::DimExpr(infer_context->GetNextSymName());
+  }
+
+  for (size_t i = 0; i < x_rank; i++) {
+    infer_context->SetShapeOrDataForValue(op->result(i), out_dims[i]);
+  }
+
+  return true;
+}
 
 // bool NanmedianOpInferSymbolicShape(pir::Operation *op,
 //                                    pir::InferSymbolicShapeContext
