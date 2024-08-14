@@ -1185,6 +1185,7 @@ bool MaxOpInferSymbolicShape(pir::Operation *op,
 
   return details::ReduceInferDim(op, infer_context, axis, keepdim, reduce_all);
 }
+
 bool ModeOpInferSymbolicShape(pir::Operation *op,
                               pir::InferSymbolicShapeContext *infer_context) {
   const auto &x_shape_or_data =
