@@ -1117,6 +1117,7 @@ set(STATIC_BUILD_TESTS
     test_shuffle_batch_op
     test_update_loss_scaling_op
     test_segment_ops
+    test_warprnnt_op
     test_while_op
     test_tensor_array_to_tensor)
 

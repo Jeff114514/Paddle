@@ -5447,6 +5447,12 @@ void WarprnntInferMeta(const MetaTensor& input,
   auto acts_dims = input.dims();
   int D = static_cast<int>(acts_dims[3]);
 
+  PADDLE_ENFORCE_EQ(
+      label.dtype(),
+      DataType::INT32,
+      errors::InvalidArgument(
+          "The dtype of Input(Label) should be int32, but received %d.",
+          label.dtype()));
   PADDLE_ENFORCE_GE(
       blank,
       0,

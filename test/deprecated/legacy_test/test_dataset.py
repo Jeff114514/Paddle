@@ -140,7 +140,6 @@ class TestDataset(unittest.TestCase):
                     pass
                 except Exception as e:
                     self.assertTrue(False)
-
             temp_dir.cleanup()
 
     def test_dataset_config(self):
@@ -895,7 +894,6 @@ class TestDataset(unittest.TestCase):
                     pass
                 except Exception as e:
                     self.assertTrue(False)
-
             temp_dir.cleanup()
 
     def test_cuda_in_memory_dataset_run(self):

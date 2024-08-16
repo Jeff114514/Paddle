@@ -19,6 +19,7 @@ from op_test import OpTest
 
 import paddle
 from paddle import _C_ops
+from paddle.framework import in_pir_mode
 from paddle.pir_utils import test_with_pir_api
 
 paddle.enable_static()
@@ -306,7 +307,10 @@ class TestWarpRNNTOpError(unittest.TestCase):
                     label_lengths=label_length,
                 )
 
-            self.assertRaises(TypeError, test_label_Variable)
+            if in_pir_mode():
+                self.assertRaises(ValueError, test_label_Variable)
+            else:
+                self.assertRaises(TypeError, test_label_Variable)
 
             def test_logits_len_Variable():
                 logits_length_data = paddle.static.data(
@@ -319,7 +323,10 @@ class TestWarpRNNTOpError(unittest.TestCase):
                     label_lengths=label_length,
                 )
 
-            self.assertRaises(TypeError, test_logits_len_Variable)
+            if in_pir_mode():
+                self.assertRaises(ValueError, test_logits_len_Variable)
+            else:
+                self.assertRaises(TypeError, test_logits_len_Variable)
 
             def test_label_len_Variable():
                 label_length_data = paddle.static.data(
@@ -332,7 +339,10 @@ class TestWarpRNNTOpError(unittest.TestCase):
                     label_lengths=label_length_data,
                 )
 
-            self.assertRaises(TypeError, test_label_len_Variable)
+            if in_pir_mode():
+                self.assertRaises(ValueError, test_label_len_Variable)
+            else:
+                self.assertRaises(TypeError, test_label_len_Variable)
 
     def test_dygraph_errors(self):
         def test_dygraph_with_lod():
